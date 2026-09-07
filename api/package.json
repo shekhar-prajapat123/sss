@@ -1,0 +1,12 @@
+{
+  "name": "sss",
+  "version": "1.0.0",
+  "description": "API for generating and exporting leave reports",
+  "main": "index.js",
+  "author": "Backend Engineer",
+  "license": "ISC",
+  "dependencies": {
+    "json2csv": "^5.0.7",
+    "xlsx": "^0.18.5"
+  }
+}

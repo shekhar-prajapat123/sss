@@ -1,0 +1,14 @@
+{
+  "name": "sss",
+  "version": "1.0.0",
+  "description": "API for employee and department management as per Story 7.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Backend Expert",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
