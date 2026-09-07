@@ -1,0 +1,11 @@
+{
+  "name": "sss",
+  "version": "1.0.0",
+  "description": "API for employee and department management as per Story 7.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Backend Expert",
+  "license": "ISC"
+}

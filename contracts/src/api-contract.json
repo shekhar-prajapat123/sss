@@ -1,0 +1,191 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SSS Reporting API",
+    "version": "1.0.0",
+    "description": "API contracts for the SSS project, focusing on report generation."
+  },
+  "paths": {
+    "/reports": {
+      "get": {
+        "summary": "Generate and Export a Leave Report",
+        "description": "Generates a comprehensive leave report based on the specified type and exports it in the chosen format. The response will be a file download. Conditional parameters are required based on the report type.",
+        "operationId": "generateReport",
+        "tags": [
+          "Reports"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "description": "The type of report to generate.",
+            "schema": {
+              "$ref": "#/components/schemas/ReportType"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": true,
+            "description": "The file format for the exported report.",
+            "schema": {
+              "$ref": "#/components/schemas/ExportFormat"
+            }
+          },
+          {
+            "name": "employeeId",
+            "in": "query",
+            "required": false,
+            "description": "The UUID of the employee. Required if report type is 'EMPLOYEE_LEAVE'.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "departmentId",
+            "in": "query",
+            "required": false,
+            "description": "The UUID of the department. Required if report type is 'DEPARTMENT_LEAVE'.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "required": false,
+            "description": "The month for the report (1-12). Required if report type is 'MONTHLY_LEAVE'.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 12
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": false,
+            "description": "The year for the report (e.g., 2023). Required if report type is 'MONTHLY_LEAVE'.",
+            "schema": {
+              "type": "integer",
+              "minimum": 2000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Report generated successfully. The response body contains the file content, and the 'Content-Disposition' header suggests a filename.",
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary",
+                  "description": "Excel file (.xlsx)"
+                }
+              },
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary",
+                  "description": "CSV file (.csv)"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request. Invalid or missing parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Authentication is required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. User does not have administrative privileges to generate reports.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error. An error occurred while generating the report.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ReportType": {
+        "type": "string",
+        "description": "Defines the types of reports that can be generated.",
+        "enum": [
+          "DEPARTMENT_LEAVE",
+          "MONTHLY_LEAVE",
+          "EMPLOYEE_LEAVE"
+        ]
+      },
+      "ExportFormat": {
+        "type": "string",
+        "description": "Defines the available export formats for the reports.",
+        "enum": [
+          "EXCEL",
+          "CSV"
+        ]
+      },
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "statusCode",
+          "message"
+        ],
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Invalid value for parameter 'type'"
+          },
+          "error": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional details about the error, often used for validation.",
+            "example": {
+              "type": "must be one of [DEPARTMENT_LEAVE, MONTHLY_LEAVE, EMPLOYEE_LEAVE]"
+            }
+          }
+        }
+      }
+    }
+  }
+}
